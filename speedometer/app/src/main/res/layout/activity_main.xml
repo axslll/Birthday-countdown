@@ -77,9 +77,24 @@
             android:background="@drawable/surface_bg"
             android:orientation="horizontal">
 
-            <include android:id="@+id/cellMax" layout="@layout/stat_cell" />
-            <include android:id="@+id/cellAvg" layout="@layout/stat_cell" />
-            <include android:id="@+id/cellDist" layout="@layout/stat_cell" />
+            <include
+                android:id="@+id/cellMax"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <include
+                android:id="@+id/cellAvg"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <include
+                android:id="@+id/cellDist"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <TextView
@@ -102,9 +117,24 @@
             android:background="@drawable/surface_bg"
             android:orientation="horizontal">
 
-            <include android:id="@+id/cellUsed" layout="@layout/stat_cell" />
-            <include android:id="@+id/cellView" layout="@layout/stat_cell" />
-            <include android:id="@+id/cellCn0" layout="@layout/stat_cell" />
+            <include
+                android:id="@+id/cellUsed"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <include
+                android:id="@+id/cellView"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <include
+                android:id="@+id/cellCn0"
+                layout="@layout/stat_cell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout

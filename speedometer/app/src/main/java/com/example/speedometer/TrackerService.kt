@@ -13,6 +13,7 @@ import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -134,7 +135,7 @@ class TrackerService : Service() {
             .setShowWhen(false)
             .setCategory(Notification.CATEGORY_NAVIGATION)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
-            .addAction(Notification.Action.Builder(null, "Stop", stop).build())
+            .addAction(Notification.Action.Builder(Icon.createWithResource(this, R.drawable.ic_stat_speed), "Stop", stop).build())
 
         if (Build.VERSION.SDK_INT >= 36) {
             b.addExtras(Bundle().apply { putBoolean(EXTRA_REQUEST_PROMOTED_ONGOING, true) })

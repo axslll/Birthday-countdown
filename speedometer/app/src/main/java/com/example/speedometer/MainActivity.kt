@@ -21,8 +21,10 @@ class MainActivity : AppCompatActivity() {
 
     private class Cell(root: View, label: String) {
         private val value: TextView = root.findViewById(R.id.value)
-        init { root.findViewById<TextView>(R.id.label).text = label }
+        private val caption: TextView = root.findViewById(R.id.label)
+        init { caption.text = label }
         fun set(text: String) { value.text = text }
+        fun setLabel(text: String) { caption.text = text }
     }
 
     private lateinit var speedometer: SpeedometerView
@@ -128,8 +130,7 @@ class MainActivity : AppCompatActivity() {
         cellAvg.set(String.format(Locale.US, "%.0f", Tracker.toUnit(s.avgMs)))
         val dist = if (mph) s.distanceM / 1609.344 else s.distanceM / 1000.0
         cellDist.set(String.format(Locale.US, "%.2f", dist))
-        findViewById<TextView>(R.id.cellDist).findViewById<TextView>(R.id.label).text =
-            if (mph) "Miles" else "Kilometres"
+        cellDist.setLabel(if (mph) "Miles" else "Kilometres")
 
         cellUsed.set(s.used.toString())
         cellView.set(s.visible.toString())
