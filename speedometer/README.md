@@ -2,7 +2,8 @@
 
 GPS speedometer with a live satellite panel.
 
-- Animated gauge, km/h or mph toggle
+- Minimal dark UI, thin gauge with top-speed marker, km/h or mph
+- Background tracking via a foreground service; speed shows as an Android 16 Live Update (status-bar chip / island)
 - Max speed, average moving speed, trip distance (long-press **MAX** to reset)
 - Satellites **in use** vs **available**, average signal (C/N0 dB-Hz) with a quality bar
 - Per-constellation breakdown (GPS, GLONASS, Galileo, BeiDou, …)

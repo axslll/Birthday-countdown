@@ -1,0 +1,9 @@
+<resources>
+    <color name="bg">#0B0B0C</color>
+    <color name="surface">#151517</color>
+    <color name="hairline">#26262A</color>
+    <color name="text_primary">#F2F2F3</color>
+    <color name="text_secondary">#8A8A91</color>
+    <color name="accent">#FF6B2C</color>
+    <color name="icon_bg">#0B0B0C</color>
+</resources>
