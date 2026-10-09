@@ -10,6 +10,13 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class LaunchTest {
+    @org.junit.Before
+    fun resetTracker() {
+        // Tracker is a process-wide singleton; start every test from a clean state
+        Tracker::class.java.getDeclaredMethod("publish", TrackerState::class.java)
+            .apply { isAccessible = true }.invoke(Tracker, TrackerState())
+    }
+
     @Test
     fun activityStartsAndRenders() {
         val controller = Robolectric.buildActivity(MainActivity::class.java).setup()
