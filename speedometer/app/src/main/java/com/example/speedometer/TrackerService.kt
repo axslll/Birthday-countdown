@@ -90,6 +90,7 @@ class TrackerService : Service() {
         Tracker.setGpsOn(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, locationListener)
         locationManager.registerGnssStatusCallback(gnssCallback, null)
+        Tracker.setRunning(true)
         Tracker.addListener(stateListener)
     }
 
@@ -99,6 +100,7 @@ class TrackerService : Service() {
             locationManager.removeUpdates(locationListener)
             locationManager.unregisterGnssStatusCallback(gnssCallback)
             tracking = false
+            Tracker.setRunning(false)
         }
         super.onDestroy()
     }
@@ -153,6 +155,10 @@ class TrackerService : Service() {
 
         fun start(context: Context) {
             context.startForegroundService(Intent(context, TrackerService::class.java))
+        }
+
+        fun stop(context: Context) {
+            context.stopService(Intent(context, TrackerService::class.java))
         }
     }
 }

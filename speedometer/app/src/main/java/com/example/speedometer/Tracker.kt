@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 data class ConstellationStat(val name: String, val used: Int, val visible: Int)
 
 data class TrackerState(
+    val running: Boolean = false,
     val gpsOn: Boolean = true,
     val speedMs: Float = 0f,
     val maxMs: Float = 0f,
@@ -56,6 +57,11 @@ object Tracker {
         state = s
         listeners.forEach { it(s) }
     }
+
+    fun setRunning(on: Boolean) = publish(
+        if (on) state.copy(running = true)
+        else state.copy(running = false, speedMs = 0f, used = 0, visible = 0, avgCn0 = 0f, constellations = emptyList())
+    )
 
     fun setGpsOn(on: Boolean) = publish(state.copy(gpsOn = on, speedMs = if (on) state.speedMs else 0f))
 

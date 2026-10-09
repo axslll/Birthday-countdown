@@ -70,6 +70,15 @@
             android:layout_height="340dp"
             android:layout_marginTop="8dp" />
 
+        <TextView
+            android:id="@+id/powerButton"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginBottom="14dp"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="16sp" />
+
         <!-- trip -->
         <LinearLayout
             android:layout_width="match_parent"

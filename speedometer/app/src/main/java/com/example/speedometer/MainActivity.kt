@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var speedometer: SpeedometerView
     private lateinit var statusDot: View
     private lateinit var statusText: TextView
+    private lateinit var powerButton: TextView
     private lateinit var unitKmh: TextView
     private lateinit var unitMph: TextView
     private lateinit var signalMeter: MeterView
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         speedometer = findViewById(R.id.speedometer)
         statusDot = findViewById(R.id.statusDot)
         statusText = findViewById(R.id.statusText)
+        powerButton = findViewById(R.id.powerButton)
         unitKmh = findViewById(R.id.unitKmh)
         unitMph = findViewById(R.id.unitMph)
         signalMeter = findViewById(R.id.signalMeter)
@@ -79,24 +81,30 @@ class MainActivity : AppCompatActivity() {
 
         unitKmh.setOnClickListener { Tracker.setMph(this, false) }
         unitMph.setOnClickListener { Tracker.setMph(this, true) }
+        powerButton.setOnClickListener { togglePower() }
         findViewById<View>(R.id.resetTrip).setOnClickListener { Tracker.resetTrip() }
     }
 
     override fun onStart() {
         super.onStart()
         Tracker.addListener(listener)
-        if (hasLocationPermission()) {
-            TrackerService.start(this)
-        } else {
-            val wanted = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            if (Build.VERSION.SDK_INT >= 33) wanted += Manifest.permission.POST_NOTIFICATIONS
-            permissions.launch(wanted.toTypedArray())
-        }
     }
 
     override fun onStop() {
         super.onStop()
         Tracker.removeListener(listener)
+    }
+
+    private fun togglePower() {
+        when {
+            Tracker.state.running -> TrackerService.stop(this)
+            hasLocationPermission() -> TrackerService.start(this)
+            else -> {
+                val wanted = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                if (Build.VERSION.SDK_INT >= 33) wanted += Manifest.permission.POST_NOTIFICATIONS
+                permissions.launch(wanted.toTypedArray())
+            }
+        }
     }
 
     private fun hasLocationPermission() = ContextCompat.checkSelfPermission(
@@ -116,11 +124,16 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        val locked = s.gpsOn && s.used > 0
+        powerButton.text = if (s.running) "Stop tracking" else "Start tracking"
+        powerButton.setBackgroundResource(if (s.running) R.drawable.pill_surface else R.drawable.pill_accent)
+        powerButton.setTextColor(ContextCompat.getColor(this, if (s.running) R.color.text_primary else R.color.bg))
+
+        val locked = s.running && s.gpsOn && s.used > 0
         statusDot.background.setTint(
             ContextCompat.getColor(this, if (locked) R.color.accent else R.color.text_secondary)
         )
         statusText.text = when {
+            !s.running -> "Tracking off"
             !s.gpsOn -> "GPS is off"
             s.used == 0 -> "Searching for satellites"
             else -> "GPS locked"
@@ -132,12 +145,12 @@ class MainActivity : AppCompatActivity() {
         cellDist.set(String.format(Locale.US, "%.2f", dist))
         cellDist.setLabel(if (mph) "Miles" else "Kilometres")
 
-        cellUsed.set(s.used.toString())
-        cellView.set(s.visible.toString())
+        cellUsed.set(if (s.running) s.used.toString() else "–")
+        cellView.set(if (s.running) s.visible.toString() else "–")
         cellCn0.set(if (s.used > 0) String.format(Locale.US, "%.0f", s.avgCn0) else "–")
 
         signalMeter.setFraction(if (s.used > 0) Tracker.signalFraction(s.avgCn0) else 0f)
-        signalQuality.text = Tracker.signalQuality(s)
+        signalQuality.text = if (s.running) Tracker.signalQuality(s) else "Off"
 
         renderConstellations(s.constellations)
     }
