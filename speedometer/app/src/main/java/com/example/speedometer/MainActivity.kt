@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -163,7 +164,13 @@ class MainActivity : AppCompatActivity() {
         }
         list.forEachIndexed { i, c ->
             val row = constellations.getChildAt(i)
-            row.findViewById<TextView>(R.id.name).text = c.name
+            row.findViewById<TextView>(R.id.name).text = c.system.name
+            row.findViewById<TextView>(R.id.country).text = c.system.country
+            row.findViewById<TextView>(R.id.fullName).text = c.system.fullName
+            row.findViewById<ImageView>(R.id.flag).apply {
+                val flag = c.system.flag
+                if (flag != null) { setImageResource(flag); visibility = View.VISIBLE } else visibility = View.GONE
+            }
             row.findViewById<TextView>(R.id.count).text = "${c.used} / ${c.visible}"
             row.findViewById<MeterView>(R.id.meter).setFraction(
                 if (c.visible > 0) c.used.toFloat() / c.visible else 0f

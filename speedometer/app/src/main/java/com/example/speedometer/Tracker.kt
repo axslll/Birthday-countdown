@@ -5,7 +5,10 @@ import android.location.GnssStatus
 import android.location.Location
 import java.util.concurrent.CopyOnWriteArrayList
 
-data class ConstellationStat(val name: String, val used: Int, val visible: Int)
+/** A satellite navigation system: short name, spelled-out name, operator and flag (null when not a single country). */
+data class Gnss(val name: String, val fullName: String, val country: String, val flag: Int?)
+
+data class ConstellationStat(val system: Gnss, val used: Int, val visible: Int)
 
 data class TrackerState(
     val running: Boolean = false,
@@ -83,12 +86,12 @@ object Tracker {
     }
 
     fun onSatellites(s: GnssStatus) {
-        val visible = linkedMapOf<String, Int>()
-        val used = linkedMapOf<String, Int>()
+        val visible = linkedMapOf<Gnss, Int>()
+        val used = linkedMapOf<Gnss, Int>()
         var usedCount = 0
         var cn0 = 0f
         for (i in 0 until s.satelliteCount) {
-            val name = constellationName(s.getConstellationType(i))
+            val name = systemFor(s.getConstellationType(i))
             visible[name] = (visible[name] ?: 0) + 1
             if (s.usedInFix(i)) {
                 usedCount++
@@ -127,14 +130,23 @@ object Tracker {
         else -> "Weak"
     }
 
-    private fun constellationName(type: Int) = when (type) {
-        GnssStatus.CONSTELLATION_GPS -> "GPS"
-        GnssStatus.CONSTELLATION_GLONASS -> "GLONASS"
-        GnssStatus.CONSTELLATION_GALILEO -> "Galileo"
-        GnssStatus.CONSTELLATION_BEIDOU -> "BeiDou"
-        GnssStatus.CONSTELLATION_QZSS -> "QZSS"
-        GnssStatus.CONSTELLATION_IRNSS -> "NavIC"
-        GnssStatus.CONSTELLATION_SBAS -> "SBAS"
-        else -> "Other"
+    private val gps = Gnss("GPS", "Global Positioning System", "United States", R.drawable.flag_us)
+    private val glonass = Gnss("GLONASS", "Global Navigation Satellite System", "Russia", R.drawable.flag_ru)
+    private val galileo = Gnss("Galileo", "Named after astronomer Galileo Galilei", "European Union", R.drawable.flag_eu)
+    private val beidou = Gnss("BeiDou", "BeiDou Navigation Satellite System", "China", R.drawable.flag_cn)
+    private val qzss = Gnss("QZSS", "Quasi-Zenith Satellite System", "Japan", R.drawable.flag_jp)
+    private val navic = Gnss("NavIC", "Navigation with Indian Constellation", "India", R.drawable.flag_in)
+    private val sbas = Gnss("SBAS", "Satellite-Based Augmentation System", "Regional correction service", null)
+    private val other = Gnss("Other", "Unknown system", "Unknown", null)
+
+    private fun systemFor(type: Int) = when (type) {
+        GnssStatus.CONSTELLATION_GPS -> gps
+        GnssStatus.CONSTELLATION_GLONASS -> glonass
+        GnssStatus.CONSTELLATION_GALILEO -> galileo
+        GnssStatus.CONSTELLATION_BEIDOU -> beidou
+        GnssStatus.CONSTELLATION_QZSS -> qzss
+        GnssStatus.CONSTELLATION_IRNSS -> navic
+        GnssStatus.CONSTELLATION_SBAS -> sbas
+        else -> other
     }
 }
